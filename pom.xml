@@ -21,6 +21,26 @@
       <artifactId>vertx-commons</artifactId>
       <version>1.0.0</version>
     </dependency>
+
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-web-openapi</artifactId>
+      <version>${vertx.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-codegen</artifactId>
+      <version>${vertx.version}</version>
+      <classifier>processor</classifier>
+    </dependency>
+
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-web-api-service</artifactId>
+      <version>${vertx.version}</version>
+    </dependency>
+
     <!-- Lombok -->
     <dependency>
       <groupId>org.projectlombok</groupId>
