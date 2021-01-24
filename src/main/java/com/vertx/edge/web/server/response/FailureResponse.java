@@ -13,7 +13,6 @@ package com.vertx.edge.web.server.response;
 
 import java.util.List;
 
-import io.vertx.codegen.annotations.DataObject;
 import io.vertx.core.eventbus.ReplyFailure;
 import io.vertx.json.schema.ValidationException;
 import io.vertx.serviceproxy.ServiceException;
@@ -26,7 +25,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@DataObject(publicConverter = true)
 public class FailureResponse {
 
   private int code;
