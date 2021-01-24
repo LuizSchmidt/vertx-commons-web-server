@@ -1,11 +1,22 @@
-package com.vertx.commons.web.server.verticle;
+/*
+ * Vert.x Edge, open source.
+ * Copyright (C) 2020-2021 Vert.x Edge
+ *
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+package com.vertx.edge.web.server.verticle;
 
 import java.util.Map;
 
-import com.vertx.commons.verticle.BaseVerticle;
-import com.vertx.commons.web.server.operation.ServiceBinderOperation;
-import com.vertx.commons.web.server.operation.mapper.OperationMapper;
-import com.vertx.commons.web.server.response.ResponseBuilder;
+import com.vertx.edge.verticle.BaseVerticle;
+import com.vertx.edge.web.server.operation.ServiceBinderOperation;
+import com.vertx.edge.web.server.operation.mapper.OperationMapper;
+import com.vertx.edge.web.server.response.ResponseBuilder;
 
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.Future;
