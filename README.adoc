@@ -1,0 +1,3 @@
+= Vert.x Edge WEB Server
+
+image:https://img.shields.io/badge/vert.x-4.0.0-purple.svg[link="https://vertx.io"]
