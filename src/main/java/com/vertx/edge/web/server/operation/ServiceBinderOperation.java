@@ -39,13 +39,13 @@ public class ServiceBinderOperation {
   public Future<Void> bindAll(Map<String, Class<?>> addresses) {
     CompositeFutureBuilder composite = CompositeFutureBuilder.create();
 
+    Promise<Void> promise = Promise.promise();
     addresses.forEach((address, clazz) -> {
       OperationService operation = bind(address, clazz);
       composite.add(operation.initialize(vertx, discovery)
           .onSuccess(v -> log.info("Publishing '{}' for address: {}", clazz.getSimpleName(), address)));
     });
 
-    Promise<Void> promise = Promise.promise();
     composite.all().onSuccess(v -> log.info("All Controllers are mapped.")).onComplete(promise);
     return promise.future();
   }
@@ -55,7 +55,16 @@ public class ServiceBinderOperation {
     OperationService operation = newInstance(clazz);
 
     Class interfaceClazz = operation.getClass().getInterfaces()[0];
-    serviceBinder.setAddress(address).register(interfaceClazz, operation);
+
+    try {
+      serviceBinder.setAddress(address).register(interfaceClazz, operation);
+    } catch (IllegalStateException e) {
+      log.error("\n**************************************************\n\n" + "Detail: " + e.getMessage()
+          + "\nThis class are generated from build, rebuild your application. \nFor more information "
+          + "visit https://vertx.io/docs/vertx-service-proxy/java/#_code_generation"
+          + "\n\n**************************************************\n");
+      throw e;
+    }
     return operation;
   }
 
