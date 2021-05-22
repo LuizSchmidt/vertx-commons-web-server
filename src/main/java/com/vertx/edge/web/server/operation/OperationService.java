@@ -11,6 +11,8 @@
  */
 package com.vertx.edge.web.server.operation;
 
+import com.vertx.edge.deploy.injection.Injection;
+
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
@@ -24,7 +26,8 @@ public abstract class OperationService {
   public final Future<Void> initialize(Vertx vertx, ServiceDiscovery serviceDiscovery) {
     this.vertx = vertx;
     this.serviceDiscovery = serviceDiscovery;
-    return this.start();
+    
+    return Injection.create(vertx, this).inject().compose(v -> this.start());
   }
 
   private final Future<Void> start() {

@@ -1,3 +1,68 @@
 = Vert.x Edge WEB Server
 
 image:https://img.shields.io/badge/vert.x-4.0.0-purple.svg[link="https://vertx.io"]
+
+== Usage
+
+Create your own class Operation and annotate with @Operation("foo.controller")
+
+```
+
+@Operation("foo.controller")
+public class FooOperation extends OperationService implements FooInterface {
+
+  @Override
+  public void foo(ServiceRequest context, Handler<AsyncResult<ServiceResponse>> resultHandler) {
+    resultHandler.handle(Future.succeededFuture(ServiceResponse.completedWithJson(new JsonObject())));
+  }
+  
+}
+
+```
+
+
+This class must implements a Interface like:
+
+```
+
+@WebApiServiceGen
+public interface FooInterface {
+
+  void #foo#(ServiceRequest context, Handler<AsyncResult<ServiceResponse>> resultHandler);
+}
+
+```
+
+
+Create file src/main/resources/spec.yaml with Swagger or Open API 3.0.0 Definition:
+
+```
+
+openapi: 3.0.0
+info:
+  title: Sample API
+  description: Optional multiline or single-line description in [CommonMark](http://commonmark.org/help/) or HTML.
+  version: 0.1.9
+servers:
+  - url: http://api.example.com/v1
+    description: Optional server description, e.g. Main (production) server
+  - url: http://staging-api.example.com
+    description: Optional server description, e.g. Internal staging server for testing
+paths:
+  /users:
+    get:
+      x-vertx-event-bus: #foo.controller#
+      operationId: #foo#
+      summary: Returns a list of users.
+      description: Optional extended description in CommonMark or HTML.
+      responses:
+        '200':    # status code
+          description: A JSON array of user names
+          content:
+            application/json:
+              schema: 
+                type: array
+                items: 
+                  type: string
+                  
+```

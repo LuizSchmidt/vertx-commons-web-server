@@ -11,55 +11,69 @@
  */
 package com.vertx.edge.web.server.response;
 
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.vertx.edge.web.server.response.exception.HttpServiceException;
 
+import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.eventbus.ReplyFailure;
+import io.vertx.core.json.JsonObject;
 import io.vertx.json.schema.ValidationException;
 import io.vertx.serviceproxy.ServiceException;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class FailureResponse {
+@Getter
+@Setter
+@JsonInclude(Include.NON_NULL)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+public final class FailureResponse {
 
   private int code;
   private String message;
-  private List<String> details;
+  private JsonObject details;
 
-  public FailureResponse create(Throwable cause) {
-    this.message = cause.getMessage();
-    return this;
-  }
-
-  public FailureResponse create(ValidationException cause) {
-    this.message = cause.keyword() + " - " + cause.getMessage();
-    return this;
-  }
-
-  public FailureResponse create(ServiceException cause) {
+  private FailureResponse(ServiceException cause) {
     this.code = cause.failureCode();
+    this.details = cause.getDebugInfo();
 
-    if (cause.failureType() == ReplyFailure.RECIPIENT_FAILURE) {
-      this.getMessageFromServiceCause(cause);
+    if (cause.failureType() == ReplyFailure.RECIPIENT_FAILURE && cause.getMessage() == null) {
+      this.message = "Error during an unknown operation. This usually happens when exceptions are not handled.";
     } else {
       this.message = cause.getMessage();
     }
-
-    return this;
   }
 
-  private void getMessageFromServiceCause(ServiceException cause) {
-    if (cause.getMessage() != null) {
-      this.message = "Error in operation: " + cause.getMessage();
-    } else if ("null".equalsIgnoreCase(cause.getMessage())) {
-      this.message = "Error in operation: NullPointerException";
+  private FailureResponse(ValidationException cause) {
+    this.code = HttpResponseStatus.BAD_REQUEST.code();
+    this.message = cause.keyword() + " - " + cause.getMessage();
+  }
+
+  private FailureResponse(HttpServiceException cause) {
+    this.message = cause.getMessage();
+    this.details = cause.getDetail();
+    this.code = cause.getHttpCode().code();
+  }
+
+  private FailureResponse(Throwable cause) {
+    this.message = cause.getMessage();
+  }
+
+  public static FailureResponse create(Throwable cause) {
+    if (cause instanceof HttpServiceException) {
+      return new FailureResponse((HttpServiceException) cause);
+    } else if (cause instanceof ValidationException) {
+      return new FailureResponse((ValidationException) cause);
+    } else if (cause instanceof ServiceException) {
+      return new FailureResponse((ServiceException) cause);
     } else {
-      this.message = "Unknown error during operation. It occurs when exceptions weren't treated in execution.";
+      return new FailureResponse(cause);
     }
+  }
+
+  public static FailureResponse create(int code, String message, JsonObject details) {
+    return new FailureResponse(code, message, details);
   }
 }
