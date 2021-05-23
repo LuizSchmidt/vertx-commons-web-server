@@ -8,7 +8,7 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class HttpResponseException {
+public final class HttpResponse {
 
   public static HttpServiceException notFound() {
     return response(HttpResponseStatus.NOT_FOUND);
@@ -24,6 +24,10 @@ public final class HttpResponseException {
 
   public static HttpServiceException conflict(String message) {
     return response(HttpResponseStatus.CONFLICT, message);
+  }
+  
+  public static HttpServiceException badRequest(String message, JsonObject detail) {
+    return new HttpServiceException(HttpResponseStatus.BAD_REQUEST, message, detail);
   }
 
   private static HttpServiceException response(HttpResponseStatus httpStatus) {
