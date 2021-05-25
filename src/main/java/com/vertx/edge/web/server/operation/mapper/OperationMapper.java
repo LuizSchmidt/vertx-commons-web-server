@@ -19,14 +19,16 @@ import org.reflections.Reflections;
 
 import com.vertx.edge.web.server.operation.Operation;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class OperationMapper {
 
   public static Map<String, Class<?>> mapFromAnnotation(String basePackage) {
     Reflections reflections = new Reflections(basePackage);
 
     return reflections.getTypesAnnotatedWith(Operation.class).stream()
-        .collect(Collectors.toMap(clazz -> {
-      return clazz.getAnnotation(Operation.class).value();
-    }, Function.identity()));
+        .collect(Collectors.toMap(clazz -> clazz.getAnnotation(Operation.class).value(), Function.identity()));
   }
 }

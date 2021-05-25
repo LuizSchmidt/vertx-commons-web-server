@@ -33,7 +33,7 @@ public class ServiceBinderOperation {
   private ServiceBinder serviceBinder;
 
   public static ServiceBinderOperation create(Vertx vertx, ServiceDiscovery discovery, boolean debugInfo) {
-    return new ServiceBinderOperation(vertx, discovery, new ServiceBinder(vertx).setIncludeDebugInfo(true));
+    return new ServiceBinderOperation(vertx, discovery, new ServiceBinder(vertx).setIncludeDebugInfo(debugInfo));
   }
 
   public Future<Void> bindAll(Map<String, Class<?>> addresses) {

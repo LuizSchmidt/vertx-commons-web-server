@@ -17,8 +17,11 @@ import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
 import io.vertx.servicediscovery.ServiceDiscovery;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
-public abstract class OperationService {
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class OperationService {
 
   protected Vertx vertx;
   protected ServiceDiscovery serviceDiscovery;
