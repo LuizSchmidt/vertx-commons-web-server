@@ -24,27 +24,50 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class Response {
-  
+
   /**
-   * Create a 201 Created HTTP response
-   * with a header Location
+   * Create a 201 Created HTTP response with a header Location
+   * 
    * @param location
    * @return a http {@link ServiceResponse}
    */
-  public static Future<ServiceResponse> created(String location){
-    ServiceResponse serviceResponse = new ServiceResponse()
-        .setStatusCode(HttpResponseStatus.CREATED.code())
+  public static Future<ServiceResponse> created(String location) {
+    ServiceResponse serviceResponse = new ServiceResponse().setStatusCode(HttpResponseStatus.CREATED.code())
         .setStatusMessage(HttpResponseStatus.CREATED.reasonPhrase())
         .putHeader(HttpHeaderNames.LOCATION.toString(), location);
     return Future.succeededFuture(serviceResponse);
   }
 
+  /**
+   * Create a 200 Created HTTP response with a body JsonObject
+   * 
+   * @param location
+   * @return a http {@link ServiceResponse}
+   */
   public static Future<ServiceResponse> ok(JsonObject json) {
     return Future.succeededFuture(ServiceResponse.completedWithJson(json));
   }
-  
+
+  /**
+   * Create a 200 Created HTTP response with a body JsonArray
+   * 
+   * @param location
+   * @return a http {@link ServiceResponse}
+   */
   public static Future<ServiceResponse> ok(JsonArray list) {
     return Future.succeededFuture(ServiceResponse.completedWithJson(list));
+  }
+
+  /**
+   * Create a 204 No-Content HTTP response
+   * 
+   * @param location
+   * @return a http {@link ServiceResponse}
+   */
+  public static Future<ServiceResponse> ok() {
+    ServiceResponse serviceResponse = new ServiceResponse().setStatusCode(HttpResponseStatus.NO_CONTENT.code())
+        .setStatusMessage(HttpResponseStatus.NO_CONTENT.reasonPhrase());
+    return Future.succeededFuture(serviceResponse);
   }
 
   public static Future<ServiceResponse> fail(HttpResponseStatus httpCode, String message, JsonObject details) {

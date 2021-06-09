@@ -74,10 +74,7 @@ public class WebServerVerticle extends BaseVerticle {
   }
 
   private Router buildRoutes(RouterBuilder routerBuilder) {
-    operations.forEach((k, v) -> {
-      log.info("Addresses: " + k);
-      routerBuilder.mountServiceInterface(v, k);
-    });
+    operations.forEach((k, v) -> routerBuilder.mountServiceInterface(v, k));
     
     routerBuilder.rootHandler(CorsHandlerBuilder.fromJson(config().getJsonObject("cors")));
     

@@ -19,6 +19,7 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.eventbus.ReplyFailure;
 import io.vertx.core.json.JsonObject;
 import io.vertx.json.schema.ValidationException;
+import io.vertx.serviceproxy.HelperUtils;
 import io.vertx.serviceproxy.ServiceException;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -58,7 +59,13 @@ public final class FailureResponse {
   }
 
   private FailureResponse(Throwable cause) {
-    this.message = cause.getMessage();
+    if(cause.getMessage() == null) {
+      this.message = "Error during an unknown operation. This usually happens when exceptions are not handled.";
+    }else {
+      this.message = cause.getMessage();
+    }
+    
+    this.details = HelperUtils.generateDebugInfo(cause);
   }
 
   public static FailureResponse create(Throwable cause) {

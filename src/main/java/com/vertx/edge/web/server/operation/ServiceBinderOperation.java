@@ -14,9 +14,9 @@ package com.vertx.edge.web.server.operation;
 import java.util.Map;
 
 import com.vertx.edge.utils.CompositeFutureBuilder;
+import com.vertx.edge.utils.VoidFuture;
 
 import io.vertx.core.Future;
-import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
 import io.vertx.servicediscovery.ServiceDiscovery;
 import io.vertx.serviceproxy.ServiceBinder;
@@ -37,17 +37,18 @@ public class ServiceBinderOperation {
   }
 
   public Future<Void> bindAll(Map<String, Class<?>> addresses) {
+    String threadName = Thread.currentThread().getName();
+    Thread.currentThread().setName("serviceBinder");
     CompositeFutureBuilder composite = CompositeFutureBuilder.create();
 
-    Promise<Void> promise = Promise.promise();
     addresses.forEach((address, clazz) -> {
       OperationService operation = bind(address, clazz);
       composite.add(operation.initialize(vertx, discovery)
-          .onSuccess(v -> log.info("Publishing '{}' for address: {}", clazz.getSimpleName(), address)));
+          .onSuccess(v -> log.debug("Publishing '{}' for address: {}", clazz.getSimpleName(), address)));
     });
 
-    composite.all().onSuccess(v -> log.info("All Controllers are mapped.")).onComplete(promise);
-    return promise.future();
+    return composite.all().onSuccess(v -> log.info("all Controllers are mapped.")).compose(VoidFuture.future())
+        .onComplete(v -> Thread.currentThread().setName(threadName));
   }
 
   @SuppressWarnings({ "unchecked", "rawtypes" })

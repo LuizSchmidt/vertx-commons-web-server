@@ -4,6 +4,7 @@ import com.vertx.edge.web.server.response.exception.HttpServiceException;
 
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.vertx.core.json.JsonObject;
+import io.vertx.serviceproxy.HelperUtils;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -29,6 +30,14 @@ public final class HttpResponse {
   public static HttpServiceException badRequest(String message, JsonObject detail) {
     return new HttpServiceException(HttpResponseStatus.BAD_REQUEST, message, detail);
   }
+  
+  public static Throwable badRequest(Throwable e) {
+    return response(HttpResponseStatus.BAD_REQUEST, e);
+  }
+
+  private static Throwable response(HttpResponseStatus httpCode, Throwable e) {
+    return response(httpCode, e.getMessage(), HelperUtils.generateDebugInfo(e));
+  }
 
   private static HttpServiceException response(HttpResponseStatus httpStatus) {
     return response(httpStatus, httpStatus.reasonPhrase());
@@ -41,4 +50,6 @@ public final class HttpResponse {
   private static HttpServiceException response(HttpResponseStatus httpStatus, String message, JsonObject detail) {
     return new HttpServiceException(httpStatus, message, detail);
   }
+  
+  
 }
